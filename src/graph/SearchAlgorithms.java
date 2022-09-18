@@ -35,6 +35,7 @@ public class SearchAlgorithms {
         System.out.println("\nПоиск в ширину выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
         printPath();
         path.clear();
+        GraphManager.resetVisits();
     }
 
     public static void runDepthFirstSearch(Vertex start, Vertex finish) {
@@ -43,6 +44,7 @@ public class SearchAlgorithms {
         System.out.println("\nПоиск в глубину выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
         printPath();
         path.clear();
+        GraphManager.resetVisits();
     }
 
     public static void runDepthLimitSearch(Vertex start, Vertex finish, int limit) {
@@ -55,6 +57,23 @@ public class SearchAlgorithms {
             System.out.println("\nПоиск в глубину (ограничение глубины " + limit + ") выполнен, но путь из города " + start + " в город " + finish + " не найден! Возможно, не хватило глубины.");
         }
         path.clear();
+        GraphManager.resetVisits();
+    }
+
+    public static void runIterativeDeepeningDepthFirstSearch(Vertex start, Vertex finish) {
+        int limit;
+        for (limit = 1; limit < Integer.MAX_VALUE; limit++) {
+            path.clear();
+            GraphManager.resetVisits();
+            if (depthLimitSearch(start, finish, limit)) {
+                break;
+            }
+        }
+        path.addFirst(start);
+        System.out.println("\nПоиск с итеративным углублением выполнен (глубина " + limit + ")! Найден следующий путь из города " + start + " в город " + finish + ":");
+        printPath();
+        path.clear();
+        GraphManager.resetVisits();
     }
 
     private static boolean depthLimitSearch(Vertex current, Vertex finish, int limit) {

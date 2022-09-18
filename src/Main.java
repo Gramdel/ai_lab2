@@ -6,22 +6,21 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws NullPointerException {
-        HashMap<String, Vertex> graph = GraphManager.createGraphFromFile("config.txt");
-        if (graph != null) {
+        if (GraphManager.createGraphFromFile("config.txt")) {
             System.out.println("Введены следующие города:");
             int count = 0;
-            for (Vertex v : graph.values()) {
+            for (Vertex v : GraphManager.getGraph().values()) {
                 System.out.println(++count + ". " + v);
             }
         } else {
             System.out.println("Введено 0 городов!");
+            System.exit(-1);
         }
 
+        HashMap<String, Vertex> graph = GraphManager.getGraph();
         SearchAlgorithms.runBreadthFirstSearch(graph.get("Москва"), graph.get("Рига"));
-        GraphManager.resetVisits(graph);
         SearchAlgorithms.runDepthFirstSearch(graph.get("Брест"), graph.get("Воронеж"));
-        GraphManager.resetVisits(graph);
         SearchAlgorithms.runDepthLimitSearch(graph.get("Брест"), graph.get("Воронеж"), 2);
-        GraphManager.resetVisits(graph);
+        SearchAlgorithms.runIterativeDeepeningDepthFirstSearch(graph.get("Рига"), graph.get("Одесса"));
     }
 }

@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class GraphManager {
-    public static HashMap<String, Vertex> createGraphFromFile(String filename) {
+    private static final HashMap<String, Vertex> graph = new HashMap<>();
+
+    public static boolean createGraphFromFile(String filename) {
         try {
             Scanner scanner = new Scanner(new FileInputStream(filename));
-            HashMap<String, Vertex> graph = new HashMap<>();
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String nameA = line.split(" ")[0];
@@ -33,7 +34,7 @@ public class GraphManager {
                 graph.put(nameA, a);
                 graph.put(nameB, b);
             }
-            return graph;
+            return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Конфигурационный файл с именем \"" + filename + "\" не найден!");
@@ -41,12 +42,16 @@ public class GraphManager {
             e.printStackTrace();
             System.out.println("Некорректная структура конфигурационного файла!");
         }
-        return null;
+        return false;
     }
 
-    public static void resetVisits(HashMap<String, Vertex> graph) {
+    public static void resetVisits() {
         for (Vertex v : graph.values()) {
             v.setWasVisited(false);
         }
+    }
+
+    public static HashMap<String, Vertex> getGraph() {
+        return graph;
     }
 }
