@@ -17,19 +17,11 @@ public class Main {
             System.out.println("Введено 0 городов!");
         }
 
-        SearchAlgorithms.runDepthFirstSearch(graph.get("Брест"), graph.get("Воронеж"));
-        GraphManager.resetVisits(graph);
         SearchAlgorithms.runBreadthFirstSearch(graph.get("Москва"), graph.get("Рига"));
         GraphManager.resetVisits(graph);
-
-        /*
-        System.out.println();
-        try {
-            SearchAlgorithms.runDepthFirstSearch(graph.get("Киев"), graph.get("Житомир"));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        SearchAlgorithms.runDepthFirstSearch(graph.get("Брест"), graph.get("Воронеж"));
         GraphManager.resetVisits(graph);
-         */
+        SearchAlgorithms.runDepthLimitSearch(graph.get("Брест"), graph.get("Воронеж"), 2);
+        GraphManager.resetVisits(graph);
     }
 }

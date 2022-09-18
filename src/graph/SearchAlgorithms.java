@@ -38,25 +38,38 @@ public class SearchAlgorithms {
     }
 
     public static void runDepthFirstSearch(Vertex start, Vertex finish) {
-        depthFirstSearch(start, finish);
+        depthLimitSearch(start, finish, Integer.MAX_VALUE);
         path.addFirst(start);
         System.out.println("\nПоиск в глубину выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
         printPath();
         path.clear();
     }
 
-    private static boolean depthFirstSearch(Vertex current, Vertex finish) {
+    public static void runDepthLimitSearch(Vertex start, Vertex finish, int limit) {
+        depthLimitSearch(start, finish, limit);
+        path.addFirst(start);
+        if (path.getLast() == finish) {
+            System.out.println("\nПоиск в глубину (ограничение глубины " + limit + ") выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
+            printPath();
+        } else {
+            System.out.println("\nПоиск в глубину (ограничение глубины " + limit + ") выполнен, но путь из города " + start + " в город " + finish + " не найден! Возможно, не хватило глубины.");
+        }
+        path.clear();
+    }
+
+    private static boolean depthLimitSearch(Vertex current, Vertex finish, int limit) {
         current.setWasVisited(true);
-        if (current != finish) {
+        if (current == finish) {
+            return true;
+        } else if (limit != 0) {
             for (Vertex v : current.getNeighbours().keySet()) {
-                if (!v.getWasVisited() && depthFirstSearch(v, finish)) {
+                if (!v.getWasVisited() && depthLimitSearch(v, finish, limit - 1)) {
                     path.addFirst(v);
                     return true;
                 }
             }
-            return false;
         }
-        return true;
+        return false;
     }
 
     private static void printPath() {
