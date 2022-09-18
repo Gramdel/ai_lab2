@@ -2,7 +2,7 @@ package graph;
 
 import java.util.HashMap;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex> {
     private String name;
     private boolean wasVisited;
     private final HashMap<Vertex, Integer> neighbours = new HashMap<>();
@@ -33,5 +33,16 @@ public class Vertex {
 
     public boolean getWasVisited() {
         return wasVisited;
+    }
+
+
+    @Override
+    public int compareTo(Vertex v) {
+        return this.getName().compareTo(v.getName());
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
