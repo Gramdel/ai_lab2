@@ -1,5 +1,7 @@
 package graph;
 
+import javafx.util.Pair;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +10,7 @@ public class SearchAlgorithms {
     private static final LinkedList<Vertex> path = new LinkedList<>();
 
     public static void runBreadthFirstSearch(Vertex start, Vertex finish) {
+        System.out.println("\nРабота поиска в ширину:");
         LinkedList<Vertex> queue = new LinkedList<>();
         HashMap<Vertex, Vertex> parents = new HashMap<>();
         parents.put(start, null);
@@ -15,6 +18,7 @@ public class SearchAlgorithms {
 
         while (!queue.isEmpty()) {
             Vertex current = queue.poll();
+            System.out.println(current);
             current.setWasVisited(true);
             if (current == finish) {
                 break;
@@ -39,6 +43,7 @@ public class SearchAlgorithms {
     }
 
     public static void runDepthFirstSearch(Vertex start, Vertex finish) {
+        System.out.println("\nРабота поиска в глубину:");
         depthLimitSearch(start, finish, Integer.MAX_VALUE);
         path.addFirst(start);
         System.out.println("\nПоиск в глубину выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
@@ -48,6 +53,7 @@ public class SearchAlgorithms {
     }
 
     public static void runDepthLimitSearch(Vertex start, Vertex finish, int limit) {
+        System.out.println("\nРабота поиска в глубину (ограничение глубины " + limit + "):");
         depthLimitSearch(start, finish, limit);
         path.addFirst(start);
         if (path.getLast() == finish) {
@@ -65,6 +71,7 @@ public class SearchAlgorithms {
         for (limit = 1; limit < Integer.MAX_VALUE; limit++) {
             path.clear();
             GraphManager.resetVisits();
+            System.out.println("\nРабота поиска с итеративным углублением (глубина " + limit + "):");
             if (depthLimitSearch(start, finish, limit)) {
                 break;
             }
@@ -76,7 +83,63 @@ public class SearchAlgorithms {
         GraphManager.resetVisits();
     }
 
+    public static void runBidirectionalSearch(Vertex start, Vertex finish) {
+        System.out.println("\nРабота двунаправленного поиска:");
+        LinkedList<Vertex> queueA = new LinkedList<>();
+        LinkedList<Vertex> queueB = new LinkedList<>();
+        HashMap<Vertex, Pair<Boolean, Boolean>> visitMap = createVisitMap();
+        HashMap<Vertex, Vertex> parentsA = new HashMap<>();
+        HashMap<Vertex, Vertex> parentsB = new HashMap<>();
+        parentsA.put(start, null);
+        parentsB.put(finish, null);
+        queueA.add(start);
+        queueB.add(finish);
+        Vertex parent = null;
+
+        while (!queueA.isEmpty() && !queueB.isEmpty()) {
+            Vertex currentA = queueA.poll();
+            Vertex currentB = queueB.poll();
+            System.out.println(currentA + ", " + currentB);
+            if (currentA == currentB || visitMap.get(currentA).getValue()) {
+                parent = currentA;
+                break;
+            } else if (visitMap.get(currentB).getKey()) {
+                parent = currentB;
+                break;
+            }
+            visitMap.put(currentA, new Pair<>(true, false));
+            visitMap.put(currentB, new Pair<>(false, true));
+            for (Vertex v : currentA.getNeighbours().keySet()) {
+                if (!visitMap.get(v).getKey()) {
+                    parentsA.put(v, currentA);
+                    queueA.add(v);
+                }
+            }
+            for (Vertex v : currentB.getNeighbours().keySet()) {
+                if (!visitMap.get(v).getValue()) {
+                    parentsB.put(v, currentB);
+                    queueB.add(v);
+                }
+            }
+        }
+
+        while (parent != null) {
+            path.addFirst(parent);
+            parent = parentsA.get(parent);
+        }
+        parent = parentsB.get(path.getLast());
+        while (parent != null) {
+            path.addLast(parent);
+            parent = parentsB.get(parent);
+        }
+
+        System.out.println("\nДвунаправленный поиск выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
+        printPath();
+        path.clear();
+    }
+
     private static boolean depthLimitSearch(Vertex current, Vertex finish, int limit) {
+        System.out.println(current);
         current.setWasVisited(true);
         if (current == finish) {
             return true;
@@ -99,5 +162,13 @@ public class SearchAlgorithms {
                 System.out.println(" ↓");
             }
         }
+    }
+
+    private static HashMap<Vertex, Pair<Boolean, Boolean>> createVisitMap() {
+        HashMap<Vertex, Pair<Boolean, Boolean>> visitMap = new HashMap<>();
+        for (Vertex v : GraphManager.getGraph().values()) {
+            visitMap.put(v, new Pair<>(false, false));
+        }
+        return visitMap;
     }
 }

@@ -22,5 +22,6 @@ public class Main {
         SearchAlgorithms.runDepthFirstSearch(graph.get("Брест"), graph.get("Воронеж"));
         SearchAlgorithms.runDepthLimitSearch(graph.get("Брест"), graph.get("Воронеж"), 2);
         SearchAlgorithms.runIterativeDeepeningDepthFirstSearch(graph.get("Рига"), graph.get("Одесса"));
+        SearchAlgorithms.runBidirectionalSearch(graph.get("Симферополь"), graph.get("Мурманск"));
     }
 }
