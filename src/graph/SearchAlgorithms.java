@@ -5,6 +5,7 @@ import javafx.util.Pair;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 public class SearchAlgorithms {
     private static final LinkedList<Vertex> path = new LinkedList<>();
@@ -136,6 +137,40 @@ public class SearchAlgorithms {
         System.out.println("\nДвунаправленный поиск выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
         printPath();
         path.clear();
+    }
+
+    public static void runBestFirstSearch(Vertex start, Vertex finish) {
+        System.out.println("\nРабота поиска по первому наилучшему совпадению:");
+        PriorityQueue<WeighedVertex> queue = new PriorityQueue<>();
+        HashMap<Vertex, Vertex> parents = new HashMap<>();
+        parents.put(start, null);
+        queue.add(new WeighedVertex(start, 0));
+
+        while (!queue.isEmpty()) {
+            queue.forEach(v -> System.out.print(v + " "));
+            System.out.println();
+            WeighedVertex current = queue.poll();
+            current.getVertex().setWasVisited(true);
+            if (current.getVertex() == finish) {
+                break;
+            }
+            for (Vertex v : current.getVertex().getNeighbours().keySet()) {
+                if (!v.getWasVisited()) {
+                    parents.put(v, current.getVertex());
+                    queue.add(new WeighedVertex(v, current.getVertex().getNeighbours().get(v)));
+                }
+            }
+        }
+
+        Vertex parent = finish;
+        while (parent != null) {
+            path.addFirst(parent);
+            parent = parents.get(parent);
+        }
+        System.out.println("\nПоиск по первому наилучшему совпадению выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
+        printPath();
+        path.clear();
+        GraphManager.resetVisits();
     }
 
     private static boolean depthLimitSearch(Vertex current, Vertex finish, int limit) {
