@@ -174,6 +174,40 @@ public class SearchAlgorithms {
         GraphManager.resetVisits();
     }
 
+    public static void runAStarSearch(Vertex start, Vertex finish) {
+        System.out.println("\nРабота поиска A*:");
+        PriorityQueue<WeighedVertex> queue = new PriorityQueue<>();
+        HashMap<Vertex, Vertex> parents = new HashMap<>();
+        parents.put(start, null);
+        queue.add(new WeighedVertex(start, 0, GraphManager.getHeuristics().get(start)));
+
+        while (!queue.isEmpty()) {
+            queue.forEach(v -> System.out.print(v + " "));
+            System.out.println();
+            WeighedVertex current = queue.poll();
+            current.getVertex().setWasVisited(true);
+            if (current.getVertex() == finish) {
+                break;
+            }
+            for (Vertex v : current.getVertex().getNeighbours().keySet()) {
+                if (!v.getWasVisited()) {
+                    parents.putIfAbsent(v, current.getVertex());
+                    queue.add(new WeighedVertex(v, current.getG() + current.getVertex().getNeighbours().get(v), GraphManager.getHeuristics().get(v)));
+                }
+            }
+        }
+
+        Vertex parent = finish;
+        while (parent != null) {
+            path.addFirst(parent);
+            parent = parents.get(parent);
+        }
+        System.out.println("\nПоиск A* выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
+        printPath();
+        path.clear();
+        GraphManager.resetVisits();
+    }
+
     private static boolean depthLimitSearch(Vertex current, Vertex finish, int limit) {
         System.out.println(current);
         current.setWasVisited(true);
