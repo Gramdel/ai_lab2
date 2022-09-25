@@ -25,6 +25,6 @@ public class WeighedVertex implements Comparable<WeighedVertex> {
 
     @Override
     public String toString() {
-        return vertex + " (вес " + weight + ")";
+        return weight + "(" + vertex + ")";
     }
 }

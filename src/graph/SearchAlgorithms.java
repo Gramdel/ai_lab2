@@ -18,15 +18,16 @@ public class SearchAlgorithms {
         queue.add(start);
 
         while (!queue.isEmpty()) {
+            queue.forEach(v -> System.out.print(v + " "));
+            System.out.println();
             Vertex current = queue.poll();
-            System.out.println(current);
             current.setWasVisited(true);
             if (current == finish) {
                 break;
             }
             for (Vertex v : current.getNeighbours().keySet()) {
                 if (!v.getWasVisited()) {
-                    parents.put(v, current);
+                    parents.putIfAbsent(v, current);
                     queue.add(v);
                 }
             }
@@ -112,13 +113,13 @@ public class SearchAlgorithms {
             visitMap.put(currentB, new Pair<>(false, true));
             for (Vertex v : currentA.getNeighbours().keySet()) {
                 if (!visitMap.get(v).getKey()) {
-                    parentsA.put(v, currentA);
+                    parentsA.putIfAbsent(v, currentA);
                     queueA.add(v);
                 }
             }
             for (Vertex v : currentB.getNeighbours().keySet()) {
                 if (!visitMap.get(v).getValue()) {
-                    parentsB.put(v, currentB);
+                    parentsB.putIfAbsent(v, currentB);
                     queueB.add(v);
                 }
             }
@@ -140,7 +141,7 @@ public class SearchAlgorithms {
     }
 
     public static void runBestFirstSearch(Vertex start, Vertex finish) {
-        System.out.println("\nРабота поиска по первому наилучшему совпадению:");
+        System.out.println("\nРабота поиска по первому наилучшему соответствию:");
         PriorityQueue<WeighedVertex> queue = new PriorityQueue<>();
         HashMap<Vertex, Vertex> parents = new HashMap<>();
         parents.put(start, null);
@@ -156,7 +157,7 @@ public class SearchAlgorithms {
             }
             for (Vertex v : current.getVertex().getNeighbours().keySet()) {
                 if (!v.getWasVisited()) {
-                    parents.put(v, current.getVertex());
+                    parents.putIfAbsent(v, current.getVertex());
                     queue.add(new WeighedVertex(v, current.getVertex().getNeighbours().get(v)));
                 }
             }
@@ -167,7 +168,7 @@ public class SearchAlgorithms {
             path.addFirst(parent);
             parent = parents.get(parent);
         }
-        System.out.println("\nПоиск по первому наилучшему совпадению выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
+        System.out.println("\nПоиск по первому наилучшему соответствию выполнен! Найден следующий путь из города " + start + " в город " + finish + ":");
         printPath();
         path.clear();
         GraphManager.resetVisits();
